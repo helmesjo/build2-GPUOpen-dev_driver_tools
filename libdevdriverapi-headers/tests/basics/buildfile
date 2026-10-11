@@ -1,0 +1,3 @@
+import libs = libdevdriverapi-headers%lib{devdriverapi-headers}
+
+exe{driver}: {hxx cxx}{**} $libs testscript{**}
