@@ -1,0 +1,7 @@
+project = libdevdriverapi
+
+using version
+using config
+using test
+using install
+using dist

@@ -1,0 +1,3 @@
+import libs = libdevdriverapi%lib{devdriverapi}
+
+exe{driver}: {hxx ixx cxx}{**} $libs testscript{**}
