@@ -1,15 +1,16 @@
 : 1
 name: libdevdriverapi
-version: 0.1.0-a.0.z
+version: 1.7.0-a.0.z
+upstream-version: 1.7
 language: c++
-project: build2-gpuopen-tools-dev_driver_tools
-summary: devdriverapi C++ library
+project: gpuopen
+summary: AMD Developer Driver API (DevDriverAPI) C++ library
+topics: amd, gpu, profiling, radeon gpu profiler, rgp
 license: MIT ; MIT License.
 description-file: README.md
 package-description-file: PACKAGE-README.md
-url: https://example.org/upstream
-email: upstream@example.org
-package-url: https://github.com/build2-packaging/build2-gpuopen-tools-dev_driver_tools
+url: https://github.com/GPUOpen-Tools/dev_driver_tools
+package-url: https://github.com/build2-packaging/GPUOpen-dev_driver_tools
 package-email: packaging@build2.org ; Mailing list.
 depends: * build2 >= 0.18.0
 depends: * bpkg >= 0.18.0
