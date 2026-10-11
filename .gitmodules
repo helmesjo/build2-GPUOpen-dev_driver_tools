@@ -1,0 +1,3 @@
+[submodule "upstream"]
+	path = upstream
+	url = https://github.com/GPUOpen-Tools/dev_driver_tools.git
