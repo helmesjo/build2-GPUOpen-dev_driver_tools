@@ -56,6 +56,33 @@ if $windows
 else
   cxx.libs += -pthread
 
+# Silence warnings about the upstream sources: nameless structs and unions
+# (disabled in upstream for MSVC, and GCC has no narrower option for these
+# than -Wno-pedantic), unused variables (disabled in upstream for GCC), the
+# std::is_pod type trait (deprecated in C++20), the Clang
+# __has_trivial_destructor() builtin (deprecated in favor of
+# __is_trivially_destructible()), and, on Windows, the noreturn assert
+# handler that returns if hard asserts are disabled.
+#
+switch $cxx.id
+{
+  case 'msvc'
+    cxx.coptions += /wd4201
+
+  case 'gcc'
+    cxx.coptions += -Wno-pedantic -Wno-unused-variable \
+                    -Wno-deprecated-declarations
+
+  case 'clang' | 'msvc-clang'
+  {
+    cxx.coptions += -Wno-gnu-anonymous-struct -Wno-nested-anon-types \
+                    -Wno-deprecated-declarations -Wno-deprecated-builtins
+
+    if $windows
+      cxx.coptions += -Wno-invalid-noreturn
+  }
+}
+
 # Export options.
 #
 lib{DevDriverAPI}:
