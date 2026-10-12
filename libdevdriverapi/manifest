@@ -14,3 +14,7 @@ package-url: https://github.com/build2-packaging/GPUOpen-dev_driver_tools
 package-email: packaging@build2.org ; Mailing list.
 depends: * build2 >= 0.18.0
 depends: * bpkg >= 0.18.0
+depends: libdevdriverapi-headers == $
+depends: librapidjson ^1.1.0
+depends: libmetrohash ^1.1.3-
+depends: libadl ^18.0.0- ? ($cxx.target.class == 'windows')
