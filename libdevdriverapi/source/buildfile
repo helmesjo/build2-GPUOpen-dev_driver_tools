@@ -2,7 +2,7 @@ intf_libs = # Interface dependencies.
 impl_libs = # Implementation dependencies.
 #import xxxx_libs += libhello%lib{hello}
 
-lib{devdriverapi}: {hxx ixx cxx}{**} $impl_libs $intf_libs
+lib{DevDriverAPI}: {hxx ixx cxx}{**} $impl_libs $intf_libs
 
 # Build options.
 #
@@ -16,7 +16,7 @@ cxx.poptions =+ "-I$out_pfx" "-I$src_pfx"
 
 # Export options.
 #
-lib{devdriverapi}:
+lib{DevDriverAPI}:
 {
   cxx.export.poptions = "-I$out_pfx" "-I$src_pfx"
   cxx.export.libs = $intf_libs
@@ -30,9 +30,9 @@ lib{devdriverapi}:
 # the version module for details on the version.* variable values.
 #
 if $version.pre_release
-  lib{devdriverapi}: bin.lib.version = "-$version.project_id"
+  lib{DevDriverAPI}: bin.lib.version = "-$version.project_id"
 else
-  lib{devdriverapi}: bin.lib.version = "-$version.major.$version.minor"
+  lib{DevDriverAPI}: bin.lib.version = "-$version.major.$version.minor"
 
 # Install recreating subdirectories.
 #
