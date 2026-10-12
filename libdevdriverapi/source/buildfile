@@ -1,8 +1,33 @@
 intf_libs = # Interface dependencies.
 impl_libs = # Implementation dependencies.
-#import xxxx_libs += libhello%lib{hello}
+import intf_libs += libdevdriverapi-headers%lib{devdriverapi-headers}
+import impl_libs += librapidjson%lib{rapidjson}
+import impl_libs += libmetrohash%lib{metrohash}
 
-lib{DevDriverAPI}: {hxx ixx cxx}{**} $impl_libs $intf_libs
+windows = ($cxx.target.class == 'windows')
+
+if $windows
+  import impl_libs += libadl%lib{adl}
+
+dd = DevDriverComponents
+
+lib{DevDriverAPI}: {hxx ixx}{**}                                        \
+                   cxx{** -DevDriverAPI/ADLGetDriverVersion          \
+                          -$dd/listener/transports/winPipeTransport \
+                          -$dd/src/protocols/etw*                   \
+                          -$dd/src/win/*                            \
+                          -$dd/src/posix/*}
+
+# Platform-specific sources, as in upstream.
+#
+lib{DevDriverAPI}: cxx{DevDriverAPI/ADLGetDriverVersion          \
+                       $dd/listener/transports/winPipeTransport \
+                       $dd/src/protocols/etw*                   \
+                       $dd/src/win/*}: include = $windows
+
+lib{DevDriverAPI}: cxx{$dd/src/posix/*}: include = (!$windows)
+
+lib{DevDriverAPI}: $impl_libs $intf_libs
 
 # Build options.
 #
@@ -11,33 +36,46 @@ src_pfx = [dir_path] $src_root/source/
 
 cxx.poptions =+ "-I$out_pfx" "-I$src_pfx"
 
-#obja{*}: cxx.poptions += -DLIBDEVDRIVERAPI_STATIC_BUILD
-#objs{*}: cxx.poptions += -DLIBDEVDRIVERAPI_SHARED_BUILD
+# Header search paths, as in upstream. Note that $dd/src/imported/ contains
+# the shim that redirects the bundled MetroHash header to the packaged one.
+#
+cxx.poptions += "-I$src_pfx/$dd/inc" \
+                "-I$src_pfx/$dd/src/imported/metrohash/src"
+
+if $windows
+  cxx.poptions += "-I$src_pfx/$dd/listener"
+else
+  cxx.poptions += -D_LINUX
+
+cxx.poptions += -DGPUOPEN_CLIENT_INTERFACE_MAJOR_VERSION=35
+
+objs{*}: cxx.poptions += -DBUILD_DLL
+
+if $windows
+  cxx.libs += advapi32.lib ole32.lib tdh.lib ws2_32.lib
+else
+  cxx.libs += -pthread
 
 # Export options.
 #
 lib{DevDriverAPI}:
 {
-  cxx.export.poptions = "-I$out_pfx" "-I$src_pfx"
   cxx.export.libs = $intf_libs
 }
-
-#liba{devdriverapi}: cxx.export.poptions += -DLIBDEVDRIVERAPI_STATIC
-#libs{devdriverapi}: cxx.export.poptions += -DLIBDEVDRIVERAPI_SHARED
 
 # For pre-releases use the complete version to make sure they cannot
 # be used in place of another pre-release or the final version. See
 # the version module for details on the version.* variable values.
 #
+# Otherwise match the upstream library name (DevDriverAPI-x64.dll on 64-bit
+# Windows and libDevDriverAPI.so on Linux), which applications load at
+# runtime by name.
+#
 if $version.pre_release
   lib{DevDriverAPI}: bin.lib.version = "-$version.project_id"
-else
-  lib{DevDriverAPI}: bin.lib.version = "-$version.major.$version.minor"
+elif ($windows && $cxx.target.cpu == 'x86_64')
+  lib{DevDriverAPI}: bin.lib.version = -x64
 
-# Install recreating subdirectories.
+# Don't install private headers.
 #
-{hxx ixx}{*}:
-{
-  install         = include/
-  install.subdirs = true
-}
+{hxx ixx}{*}: install = false
