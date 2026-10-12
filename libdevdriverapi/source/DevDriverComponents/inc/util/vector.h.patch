@@ -1,0 +1,11 @@
+--- vector.h.orig	2026-10-12 01:52:10 +0200
++++ vector.h	2026-10-12 02:07:51 +0200
+@@ -411,7 +411,7 @@
+             // copy all values
+             for (; m_size < rhs.m_size; m_size++)
+             {
+-                m_pData[index] = rhs.m_pData[index];
++                m_pData[m_size] = rhs.m_pData[m_size];
+             }
+         }
+ 
