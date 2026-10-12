@@ -1,0 +1,4 @@
+source/DevDriverComponents/inc/protocols symlink=dir
+source/DevDriverComponents/listener symlink=dir
+source/DevDriverComponents/src/protocols symlink=dir
+source/DevDriverComponents/src/win symlink=dir

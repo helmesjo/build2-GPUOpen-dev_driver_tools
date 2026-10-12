@@ -1,0 +1,1 @@
+../../../../upstream/source/DevDriverComponents/inc/msgChannel.h
